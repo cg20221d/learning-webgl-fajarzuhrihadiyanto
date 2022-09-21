@@ -8,9 +8,9 @@ const main = () => {
     let vertices = [
         // Coord    Color
         0.5, 0.5,   1, 0, 1,    // Point 1  (magenta)
-        0.0, 0.0,   1, 1, 0,    // Point 2  (yellow)
-        -0.5, 0.5,  0, 1, 1,    // Point 3  (cyan)
-        0, 1,       0, 0, 0     // Point 4  (black)
+        0.5, -0.5,   1, 1, 0,    // Point 2  (yellow)
+        -0.5, -0.5, 0, 1, 1,    // Point 3  (cyan)
+        -0.5, 0.5,  0, 0, 0     // Point 4  (black)
     ]
     //#endregion  //*======== Define Attribute ===========
 
@@ -70,6 +70,9 @@ const main = () => {
     let theta = 0.0
     const uTheta = gl.getUniformLocation(shaderProgram, 'uTheta')
 
+    let freeze = false
+
+
 
     //#region  //*=========== Get Attribute From Array ===========
     const aPosition = gl.getAttribLocation(shaderProgram, 'aPosition')
@@ -83,15 +86,27 @@ const main = () => {
     //#endregion  //*======== Get Attribute From Array ===========
 
 
+    //#region  //*=========== Mouse Listener ===========
+    const onMouseClick = event => {
+        freeze = !freeze
+    }
+
+    document.addEventListener('click', onMouseClick)
+    //#endregion  //*======== Mouse Listener ===========
+
+
+    //#region  //*=========== Render ===========
     const render = () => {
         //#region  //*=========== Paint The Background ===========
         gl.clearColor(0.38, 0.51, 0.96, 1)
         gl.clear(gl.COLOR_BUFFER_BIT)
         //#endregion  //*======== Paint The Background ===========
 
-        theta += 0.00001
+        if (!freeze) {
+            theta += 0.1
+            gl.uniform1f(uTheta, theta)
+        }
 
-        gl.uniform1f(uTheta, theta)
     
         //#region  //*=========== Draw Using Vertices ===========
         // gl.drawArrays(gl.POINTS, 0, 4); // draw point
@@ -103,9 +118,10 @@ const main = () => {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); // draw triangles fan
         //#endregion  //*======== Draw Points ===========
 
-        render()
+        requestAnimationFrame(render)
     }
 
-    setInterval(render, 1000/30)
+    requestAnimationFrame(render)
+    //#endregion  //*======== Render ===========
 
 }
