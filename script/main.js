@@ -6,10 +6,11 @@ const main = () => {
 
     //#region  //*=========== Define Attribute ===========
     let vertices = [
-        0.5, 0.5,   // Point 1
-        0.0, 0.0,   // Point 2
-        -0.5, 0.5,  // Point 3
-        0, 1        // Point 4
+        // Coord    Color
+        0.5, 0.5,   1, 0, 1,    // Point 1  (magenta)
+        0.0, 0.0,   1, 1, 0,    // Point 2  (yellow)
+        -0.5, 0.5,  0, 1, 1,    // Point 3  (cyan)
+        0, 1,       0, 0, 0     // Point 4  (black)
     ]
     //#endregion  //*======== Define Attribute ===========
 
@@ -23,11 +24,14 @@ const main = () => {
     let vertexShaderCode = 
     `
         attribute vec2 aPosition;
+        attribute vec3 aColor;
+        varying vec3 vColor;
         void main() {
             float x = aPosition.x;
             float y = aPosition.y;
             gl_PointSize = 2.0;
             gl_Position = vec4(x, y, 0.0, 1.0);
+            vColor = aColor;
         }
     `
     const vertexShaderObject = gl.createShader(gl.VERTEX_SHADER)
@@ -39,11 +43,9 @@ const main = () => {
     let fragmentShaderCode =
     `
         precision mediump float;
+        varying vec3 vColor;
         void main() {
-            float r = 0.96;
-            float g = 0.68;
-            float b = 0.26;
-            gl_FragColor = vec4(r, g, b, 1.0);
+            gl_FragColor = vec4(vColor, 1.0);
         }
     `
     const fragmentShaderObjext = gl.createShader(gl.FRAGMENT_SHADER)
@@ -63,8 +65,13 @@ const main = () => {
 
     //#region  //*=========== Get Attribute From Array ===========
     const aPosition = gl.getAttribLocation(shaderProgram, 'aPosition')
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0)
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0)
     gl.enableVertexAttribArray(aPosition)
+
+    
+    const aColor = gl.getAttribLocation(shaderProgram, 'aColor')
+    gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT)
+    gl.enableVertexAttribArray(aColor)
     //#endregion  //*======== Get Attribute From Array ===========
 
     //#region  //*=========== Paint The Background ===========
@@ -79,6 +86,6 @@ const main = () => {
     // gl.drawArrays(gl.LINE_STRIP, 0, 4); // draw lines strip
     // gl.drawArrays(gl.TRIANGLES, 0, 6); // draw triangles
     // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // draw triangles strip
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 6); // draw triangles fan
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); // draw triangles fan
     //#endregion  //*======== Draw Points ===========
 }
