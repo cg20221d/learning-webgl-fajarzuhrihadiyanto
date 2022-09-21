@@ -26,7 +26,7 @@ const main = () => {
         void main() {
             float x = aPosition.x;
             float y = aPosition.y;
-            gl_PointSize = 10.0;
+            gl_PointSize = 2.0;
             gl_Position = vec4(x, y, 0.0, 1.0);
         }
     `
@@ -73,12 +73,12 @@ const main = () => {
     //#endregion  //*======== Paint The Background ===========
 
     //#region  //*=========== Draw Using Vertices ===========
-    gl.drawArrays(gl.POINTS, 0, 4); // draw point
+    // gl.drawArrays(gl.POINTS, 0, 4); // draw point
     // gl.drawArrays(gl.LINES, 0, 4); // draw lines
     // gl.drawArrays(gl.LINE_LOOP, 0, 4); // draw lines loop
     // gl.drawArrays(gl.LINE_STRIP, 0, 4); // draw lines strip
     // gl.drawArrays(gl.TRIANGLES, 0, 6); // draw triangles
     // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // draw triangles strip
-    // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); // draw triangles fan
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 6); // draw triangles fan
     //#endregion  //*======== Draw Points ===========
 }
