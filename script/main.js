@@ -26,11 +26,16 @@ const main = () => {
         attribute vec2 aPosition;
         attribute vec3 aColor;
         varying vec3 vColor;
+        uniform float uTheta;
         void main() {
-            float x = aPosition.x;
-            float y = aPosition.y;
-            gl_PointSize = 2.0;
-            gl_Position = vec4(x, y, 0.0, 1.0);
+            float x = -sin(uTheta) * aPosition.x + cos(uTheta) * aPosition.y;
+            float y = sin(uTheta) * aPosition.y + cos(uTheta) * aPosition.x;
+            gl_Position = vec4(
+                x,
+                y,
+                0.0,
+                1.0
+            );
             vColor = aColor;
         }
     `
@@ -62,6 +67,9 @@ const main = () => {
     gl.useProgram(shaderProgram)
     //#endregion  //*======== Create Executable Container ===========
 
+    let theta = 0.0
+    const uTheta = gl.getUniformLocation(shaderProgram, 'uTheta')
+
 
     //#region  //*=========== Get Attribute From Array ===========
     const aPosition = gl.getAttribLocation(shaderProgram, 'aPosition')
@@ -74,18 +82,30 @@ const main = () => {
     gl.enableVertexAttribArray(aColor)
     //#endregion  //*======== Get Attribute From Array ===========
 
-    //#region  //*=========== Paint The Background ===========
-    gl.clearColor(0.38, 0.51, 0.96, 1)
-    gl.clear(gl.COLOR_BUFFER_BIT)
-    //#endregion  //*======== Paint The Background ===========
 
-    //#region  //*=========== Draw Using Vertices ===========
-    // gl.drawArrays(gl.POINTS, 0, 4); // draw point
-    // gl.drawArrays(gl.LINES, 0, 4); // draw lines
-    // gl.drawArrays(gl.LINE_LOOP, 0, 4); // draw lines loop
-    // gl.drawArrays(gl.LINE_STRIP, 0, 4); // draw lines strip
-    // gl.drawArrays(gl.TRIANGLES, 0, 6); // draw triangles
-    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // draw triangles strip
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); // draw triangles fan
-    //#endregion  //*======== Draw Points ===========
+    const render = () => {
+        //#region  //*=========== Paint The Background ===========
+        gl.clearColor(0.38, 0.51, 0.96, 1)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+        //#endregion  //*======== Paint The Background ===========
+
+        theta += 0.00001
+
+        gl.uniform1f(uTheta, theta)
+    
+        //#region  //*=========== Draw Using Vertices ===========
+        // gl.drawArrays(gl.POINTS, 0, 4); // draw point
+        // gl.drawArrays(gl.LINES, 0, 4); // draw lines
+        // gl.drawArrays(gl.LINE_LOOP, 0, 4); // draw lines loop
+        // gl.drawArrays(gl.LINE_STRIP, 0, 4); // draw lines strip
+        // gl.drawArrays(gl.TRIANGLES, 0, 6); // draw triangles
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // draw triangles strip
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); // draw triangles fan
+        //#endregion  //*======== Draw Points ===========
+
+        render()
+    }
+
+    setInterval(render, 1000/30)
+
 }
