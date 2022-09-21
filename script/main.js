@@ -27,9 +27,13 @@ const main = () => {
         attribute vec3 aColor;
         varying vec3 vColor;
         uniform float uTheta;
+        uniform float uMoveX;
+        uniform float uMoveY;
         void main() {
             float x = -sin(uTheta) * aPosition.x + cos(uTheta) * aPosition.y;
             float y = sin(uTheta) * aPosition.y + cos(uTheta) * aPosition.x;
+            x += uMoveX;
+            y += uMoveY;
             gl_Position = vec4(
                 x,
                 y,
@@ -94,6 +98,64 @@ const main = () => {
     document.addEventListener('click', onMouseClick)
     //#endregion  //*======== Mouse Listener ===========
 
+    
+    let keysPressed = {}
+
+    //#region  //*=========== Keyboard Listener ===========
+    const onKeydown = event => {
+
+        keysPressed[event.key] = true
+        if (event.keyCode == 32) freeze = !freeze
+
+        if (keysPressed['ArrowUp'] && keysPressed['ArrowLeft']) {
+            moveX -= movement
+            moveY += movement
+        } else if (keysPressed['ArrowUp'] && keysPressed['ArrowRight']) {
+            moveX += movement
+            moveY += movement
+        } else if (keysPressed['ArrowDown'] && keysPressed['ArrowLeft']) {
+            moveX -= movement
+            moveY -= movement
+        } else if (keysPressed['ArrowDown'] && keysPressed['ArrowRight']) {
+            moveX += movement
+            moveY -= movement
+        } else {
+            if (event.keyCode == 37) moveX -= movement
+            if (event.keyCode == 38) moveY += movement
+            if (event.keyCode == 39) moveX += movement
+            if (event.keyCode == 40) moveY -= movement
+        }
+    }
+
+    const movement = 0.1
+    const onKeyup = event => {
+        
+        keysPressed[event.key] = false
+        if (event.keyCode == 32) freeze = !freeze
+
+        
+        if (event.keyCode == 37) moveX += movement
+        if (event.keyCode == 38) moveY -= movement
+        if (event.keyCode == 39) moveX -= movement
+        if (event.keyCode == 40) moveY += movement
+    }
+
+    document.addEventListener('keydown', onKeydown)
+    document.addEventListener('keyup', onKeyup)
+    //#endregion  //*======== Keyboard Listener ===========
+
+    let moveX = 0
+    let moveY = 0
+
+    const uMoveX = gl.getUniformLocation(shaderProgram, 'uMoveX')
+    const uMoveY = gl.getUniformLocation(shaderProgram, 'uMoveY')
+
+    const onKeypress = event => {
+
+    }
+
+    document.addEventListener('keypress', onKeypress)
+
 
     //#region  //*=========== Render ===========
     const render = () => {
@@ -106,6 +168,9 @@ const main = () => {
             theta += 0.1
             gl.uniform1f(uTheta, theta)
         }
+
+        gl.uniform1f(uMoveX, moveX)
+        gl.uniform1f(uMoveY, moveY)
 
     
         //#region  //*=========== Draw Using Vertices ===========
