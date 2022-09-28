@@ -100,6 +100,11 @@ const main = () => {
 
     
     let keysPressed = {}
+    const movement = 0.1
+    let moveX = 0
+    let moveY = 0
+    const uMoveX = gl.getUniformLocation(shaderProgram, 'uMoveX')
+    const uMoveY = gl.getUniformLocation(shaderProgram, 'uMoveY')
 
     //#region  //*=========== Keyboard Listener ===========
     const onKeydown = event => {
@@ -127,7 +132,6 @@ const main = () => {
         }
     }
 
-    const movement = 0.1
     const onKeyup = event => {
         
         keysPressed[event.key] = false
@@ -143,18 +147,6 @@ const main = () => {
     document.addEventListener('keydown', onKeydown)
     document.addEventListener('keyup', onKeyup)
     //#endregion  //*======== Keyboard Listener ===========
-
-    let moveX = 0
-    let moveY = 0
-
-    const uMoveX = gl.getUniformLocation(shaderProgram, 'uMoveX')
-    const uMoveY = gl.getUniformLocation(shaderProgram, 'uMoveY')
-
-    const onKeypress = event => {
-
-    }
-
-    document.addEventListener('keypress', onKeypress)
 
 
     //#region  //*=========== Render ===========
