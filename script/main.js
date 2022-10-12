@@ -6,11 +6,10 @@ const main = () => {
 
     //#region  //*=========== Define Attribute ===========
     let vertices = [
-        // Coord    Color
-        0.5, 0.5,   1, 0, 1,    // Point 1  (magenta)
-        0.5, -0.5,   1, 1, 0,    // Point 2  (yellow)
-        -0.5, -0.5, 0, 1, 1,    // Point 3  (cyan)
-        -0.5, 0.5,  0, 0, 0     // Point 4  (black)
+        0.5, 0.0, 0.0, 1.0, 1.0,   // A: kanan atas    (BIRU LANGIT)
+        0.0, -0.5, 1.0, 0.0, 1.0,  // B: bawah tengah  (MAGENTA)
+        -0.5, 0.0, 1.0, 1.0, 0.0,  // C: kiri atas     (KUNING)
+        0.0, 0.5, 1.0, 1.0, 1.0    // D: atas tengah   (PUTIH)
     ]
     //#endregion  //*======== Define Attribute ===========
 
@@ -156,13 +155,13 @@ const main = () => {
         gl.clear(gl.COLOR_BUFFER_BIT)
         //#endregion  //*======== Paint The Background ===========
 
-        if (!freeze) {
-            theta += 0.1
-            gl.uniform1f(uTheta, theta)
-        }
-
-        gl.uniform1f(uMoveX, moveX)
-        gl.uniform1f(uMoveY, moveY)
+        // if (!freeze) {
+        //     theta += 0.1
+        //     gl.uniform1f(uTheta, theta)
+        // }
+        //
+        // gl.uniform1f(uMoveX, moveX)
+        // gl.uniform1f(uMoveY, moveY)
 
     
         //#region  //*=========== Draw Using Vertices ===========
