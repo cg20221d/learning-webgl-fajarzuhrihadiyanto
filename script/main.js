@@ -26,19 +26,23 @@ const main = () => {
         attribute vec3 aColor;
         varying vec3 vColor;
         uniform float uTheta;
+        uniform vec2 uDelta;
         uniform float uMoveX;
         uniform float uMoveY;
         void main() {
-            float x = -sin(uTheta) * aPosition.x + cos(uTheta) * aPosition.y;
-            float y = sin(uTheta) * aPosition.y + cos(uTheta) * aPosition.x;
-            x += uMoveX;
-            y += uMoveY;
-            gl_Position = vec4(
-                x,
-                y,
-                0.0,
-                1.0
-            );
+            vec2 position = aPosition;  
+            vec3 d = vec3(0.5, -0.5, 0.0);
+            mat4 translation = mat4(1.0, 0.0, 0.0, 0.0,
+                                    0.0, 1.0, 0.0, 0.0,
+                                    0.0, 0.0, 1.0, 0.0,
+                                    uDelta.x, uDelta.y, 0.0, 1.0); 
+                                    
+            mat4 rotation = mat4(
+                cos(uTheta), sin(uTheta), 0.0, 0.0,
+                -sin(uTheta), cos(uTheta), 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0);
+            gl_Position = translation * rotation * vec4(aPosition, 0, 1);
             vColor = aColor;
         }
     `
@@ -70,9 +74,11 @@ const main = () => {
     gl.useProgram(shaderProgram)
     //#endregion  //*======== Create Executable Container ===========
 
-    let theta = 0.0
+    let theta = 0.5
     const uTheta = gl.getUniformLocation(shaderProgram, 'uTheta')
-
+    const hDelta = 0.0
+    const vDelta = 0.0
+    const uDelta = gl.getUniformLocation(shaderProgram, "uDelta");
     let freeze = false
 
 
@@ -155,13 +161,14 @@ const main = () => {
         gl.clear(gl.COLOR_BUFFER_BIT)
         //#endregion  //*======== Paint The Background ===========
 
-        // if (!freeze) {
-        //     theta += 0.1
-        //     gl.uniform1f(uTheta, theta)
-        // }
+        if (!freeze) {
+            theta += 0.1
+            gl.uniform1f(uTheta, theta)
+        }
         //
         // gl.uniform1f(uMoveX, moveX)
         // gl.uniform1f(uMoveY, moveY)
+        gl.uniform2f(uDelta, hDelta, vDelta)
 
     
         //#region  //*=========== Draw Using Vertices ===========
