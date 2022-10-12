@@ -25,24 +25,9 @@ const main = () => {
         attribute vec2 aPosition;
         attribute vec3 aColor;
         varying vec3 vColor;
-        uniform float uTheta;
-        uniform vec2 uDelta;
-        uniform float uMoveX;
-        uniform float uMoveY;
+        uniform mat4 uModel;
         void main() {
-            vec2 position = aPosition;  
-            vec3 d = vec3(0.5, -0.5, 0.0);
-            mat4 translation = mat4(1.0, 0.0, 0.0, 0.0,
-                                    0.0, 1.0, 0.0, 0.0,
-                                    0.0, 0.0, 1.0, 0.0,
-                                    uDelta.x, uDelta.y, 0.0, 1.0); 
-                                    
-            mat4 rotation = mat4(
-                cos(uTheta), sin(uTheta), 0.0, 0.0,
-                -sin(uTheta), cos(uTheta), 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0);
-            gl_Position = translation * rotation * vec4(aPosition, 0, 1);
+            gl_Position = uModel * vec4(aPosition, 0, 1);
             vColor = aColor;
         }
     `
@@ -74,11 +59,9 @@ const main = () => {
     gl.useProgram(shaderProgram)
     //#endregion  //*======== Create Executable Container ===========
 
-    let theta = 0.5
-    const uTheta = gl.getUniformLocation(shaderProgram, 'uTheta')
-    const hDelta = 0.0
-    const vDelta = 0.0
-    const uDelta = gl.getUniformLocation(shaderProgram, "uDelta");
+
+    let theta = 0.0
+    const uModel = gl.getUniformLocation(shaderProgram, "uModel");
     let freeze = false
 
 
@@ -108,8 +91,6 @@ const main = () => {
     const movement = 0.1
     let moveX = 0
     let moveY = 0
-    const uMoveX = gl.getUniformLocation(shaderProgram, 'uMoveX')
-    const uMoveY = gl.getUniformLocation(shaderProgram, 'uMoveY')
 
     //#region  //*=========== Keyboard Listener ===========
     const onKeydown = event => {
@@ -163,12 +144,19 @@ const main = () => {
 
         if (!freeze) {
             theta += 0.1
-            gl.uniform1f(uTheta, theta)
+            // gl.uniform1f(uTheta, theta)
         }
-        //
+
+        // Create identity matrix
+        let model = glMatrix.mat4.create()
+        glMatrix.mat4.translate(model, model, [moveX, moveY, 0.0])
+        glMatrix.mat4.rotateZ(
+          model, model, theta
+        )
+        gl.uniformMatrix4fv(uModel, false, model)
         // gl.uniform1f(uMoveX, moveX)
         // gl.uniform1f(uMoveY, moveY)
-        gl.uniform2f(uDelta, hDelta, vDelta)
+        // gl.uniform2f(uDelta, hDelta, vDelta)
 
     
         //#region  //*=========== Draw Using Vertices ===========
